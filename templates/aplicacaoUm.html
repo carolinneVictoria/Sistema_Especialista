@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aplicação de Fungicidas</title>
+
+    <!-- Úlitima versão compilada e minimizada CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Última versão compilada JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <style>
+    body {
+        background-image: url("{{ url_for('static', filename='imagens/soja2.jpg') }}");
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+    }
+    </style>
+
+</head>
+<body>
+
+<!-- Container PRINCIPAL do Sistema-->
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-12">
+
+            <div class="container-fluid text-left">
+
+                <h2 class="text-center">Dados para Avaliação</h2>
+
+                        <div class="col-sm-12">
+
+                            <form action="/resultado" class="was-validated" method="POST" enctype="multipart/form-data">
+
+                                <div class="row">
+                                <div class="col-md-3 mb-3">
+                                    <div class="form-floating mb-3 mt-3">
+                                        <select class="form-select" id="previsaoTempo" name="previsaoTempo" required>
+                                            <option value="0">Desfavoravel</option>
+                                            <option value="1">Favoravel</option>
+                                        </select>
+                                        <label for="previsaoTempo" class="form-label">Previsão do Tempo:</label>
+                                        <div class="valid-feedback"></div>
+                                        <div class="invalid-feedback"></div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-3 mb-3">
+                                    <div class="form-floating mb-3 mt-3">
+                                        <select class="form-select" id="vazioSanitario" name="vazioSanitario" required>
+                                            <option value="0">Não</option>
+                                            <option value="1">Sim</option>
+                                        </select>
+                                        <label for="vazioSanitario" class="form-label">Vazio Sanitario na Região:</label>
+                                        <div class="valid-feedback"></div>
+                                        <div class="invalid-feedback"></div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-3 mb-3">
+                                    <div class="form-floating mb-3 mt-3">
+                                        <select class="form-select" id="ocorrenciaParaguai" name="ocorrenciaParaguai" required>
+                                            <option value="0">Não</option>
+                                            <option value="1">Sim</option>
+                                        </select>
+                                        <label for="ocorrenciaParaguai" class="form-label">Ocorrência no Paraguai:</label>
+                                        <div class="valid-feedback"></div>
+                                        <div class="invalid-feedback"></div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-3 mb-3">
+                                    <div class="form-floating mb-3 mt-3">
+                                        <select class="form-select" id="correnteAerea" name="correnteAerea" required>
+                                            <option value="0">Não</option>
+                                            <option value="1">Sim</option>
+                                        </select>
+                                        <label for="correnteAerea" class="form-label">Corrente aerea de oeste para leste:</label>
+                                        <div class="valid-feedback"></div>
+                                        <div class="invalid-feedback"></div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-3 mb-3">
+                                    <div class="form-floating mb-3 mt-3">
+                                        <select class="form-select" id="sojaSafrinha" name="sojaSafrinha" required>
+                                            <option value="0">Não</option>
+                                            <option value="1">Sim</option>
+                                        </select>
+                                        <label for="sojaSafrinha" class="form-label">Soja Safrinha:</label>
+                                        <div class="valid-feedback"></div>
+                                        <div class="invalid-feedback"></div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-3 mb-3">
+                                    <div class="form-floating mb-3 mt-3">
+                                        <select class="form-select" id="chuvaInverno" name="chuvaInverno" required>
+                                            <option value="0">Seco</option>
+                                            <option value="1">Normal</option>
+                                            <option value="2">Chuvoso</option>
+                                        </select>
+                                        <label for="chuvaInverno" class="form-label">Chuva de inverno:</label>
+                                        <div class="valid-feedback"></div>
+                                        <div class="invalid-feedback"></div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-3 mb-3">
+                                    <div class="form-floating mb-3 mt-3">
+                                        <select class="form-select" id="geada" name="geada" required>
+                                            <option value="0">Pouca</option>
+                                            <option value="1">Muita</option>
+                                        </select>
+                                        <label for="geada" class="form-label">Geada:</label>
+                                        <div class="valid-feedback"></div>
+                                        <div class="invalid-feedback"></div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-3 mb-3">
+                                    <div class="form-floating mb-3 mt-3">
+                                        <select class="form-select" id="estadioFenologico" name="estadioFenologico" required>
+                                            <option value="0">Antes Flores</option>
+                                            <option value="1">A Partir Flores</option>
+                                        </select>
+                                        <label for="estadioFenologico" class="form-label">Estadio Fenologico:</label>
+                                        <div class="valid-feedback"></div>
+                                        <div class="invalid-feedback"></div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-3 mb-3">
+                                    <div class="form-floating mb-3 mt-3">
+                                        <select class="form-select" id="perfilAgricultor" name="perfilAgricultor" required>
+                                            <option value="0">Conservador</option>
+                                            <option value="1">Inovador</option>
+                                        </select>
+                                        <label for="perfilAgricultor" class="form-label">Perfil do Agricultor:</label>
+                                        <div class="valid-feedback"></div>
+                                        <div class="invalid-feedback"></div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-3 mb-3">
+                                    <div class="form-floating mb-3 mt-3">
+                                        <select class="form-select" id="chuva" name="chuva" required>
+                                            <option value="0">Pouca</option>
+                                            <option value="1">Normal</option>
+                                            <option value="2">Muita</option>
+                                        </select>
+                                        <label for="chuva" class="form-label">Chuva:</label>
+                                        <div class="valid-feedback"></div>
+                                        <div class="invalid-feedback"></div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-3 mb-3">
+                                    <div class="form-floating mb-3 mt-3">
+                                        <select class="form-select" id="epocaSemeadura" name="epocaSemeadura" required>
+                                            <option value="0">Precoce</option>
+                                            <option value="1">Normal</option>
+                                            <option value="2">Tardia</option>
+                                        </select>
+                                        <label for="epocaSemeadura" class="form-label">Epoca de Semeadura:</label>
+                                        <div class="valid-feedback"></div>
+                                        <div class="invalid-feedback"></div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-3 mb-3">
+                                    <div class="form-floating mb-3 mt-3">
+                                        <select class="form-select" id="monitoramentoVisual" name="monitoramentoVisual" required>
+                                            <option value="0">Negativo</option>
+                                            <option value="1">Positivo</option>
+                                        </select>
+                                        <label for="monitoramentoVisual" class="form-label">Monitoramento Visual:</label>
+                                        <div class="valid-feedback"></div>
+                                        <div class="invalid-feedback"></div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-6 mb-3">
+                                    <div class="form-floating mb-3 mt-3">
+                                        <select class="form-select" id="ocorrencia" name="ocorrencia" required>
+                                            <option value="0">Não</option>
+                                            <option value="1">Sim</option>
+                                        </select>
+                                        <label for="ocorrencia" class="form-label">Ocorrência em Lavouras Vizinhas:</label>
+                                        <div class="valid-feedback"></div>
+                                        <div class="invalid-feedback"></div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <div class="form-floating mb-3 mt-3">
+                                        <select class="form-select" id="coletaEsporos" name="coletaEsporos" required>
+                                            <option value="0">Ausente</option>
+                                            <option value="1">Presente</option>
+                                        </select>
+                                        <label for="coletaEsporos" class="form-label">Armadilha de Coleta de Esporos:</label>
+                                        <div class="valid-feedback"></div>
+                                        <div class="invalid-feedback"></div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-12 mb-3 text-center">
+                                    <button type="submit" class="btn btn-primary w-100">Verificar</button>
+                                </div>
+
+                            </form>
+                            </div>
+                        </div>
+                </div>
+                <br>
+                <br>
+
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

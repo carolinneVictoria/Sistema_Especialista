@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aplicação de Fungicidas</title>
+
+    <!-- Úlitima versão compilada e minimizada CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Última versão compilada JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <style>
+    body {
+        background-image: url("{{ url_for('static', filename='imagens/soja2.jpg') }}");
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+    }
+    </style>
+
+</head>
+<body>
+
+<!-- Container PRINCIPAL do Sistema-->
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-12">
+
+            <div class="container-fluid text-left">
+
+                <h2 class="text-center">Dados para Avaliação de Terceira Aplicação</h2>
+
+                        <div class="col-sm-12">
+
+                            <form action="/resultado3" class="was-validated" method="POST" enctype="multipart/form-data">
+
+                                <div class="row">
+                                <div class="col-md-6 mb-6">
+                                    <div class="form-floating mb-3 mt-3">
+                                        <select class="form-select" id="toleranciaCultivar" name="toleranciaCultivar" required>
+                                            <option value="0">Suceptivel</option>
+                                            <option value="1">Tolerante</option>
+                                        </select>
+                                        <label for="toleranciaCultivar" class="form-label">Qual a tolerância do cultivar:</label>
+                                        <div class="valid-feedback"></div>
+                                        <div class="invalid-feedback"></div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 mb-6">
+                                    <div class="form-floating mb-3 mt-3">
+                                        <select class="form-select" id="fungicidaUtilizado" name="fungicidaUtilizado" required>
+                                            <option value="0">Nenhum</option>
+                                            <option value="1">TriazolEstrub</option>
+                                            <option value="2">CarbEstrob</option>
+                                        </select>
+                                        <label for="fungicidaUtilizado" class="form-label">Qual o fungicida utilizado na segunda aplicação:</label>
+                                        <div class="valid-feedback"></div>
+                                        <div class="invalid-feedback"></div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 mb-6">
+                                    <div class="form-floating mb-3 mt-3">
+                                        <select class="form-select" id="segundaSemana" name="segundaSemana" required>
+                                            <option value="" disabled selected>Selecione a semana</option>
+                                            {% for i in range(1, 18) %}
+                                            <option value="{{ i }}">{{ i }}</option>
+                                            {% endfor %}
+                                        </select>
+                                        <label for="segundaSemana" class="form-label">Semana da segunda aplicação:</label>
+                                        <div class="invalid-feedback">Selecione uma semana.</div>
+                                    </div>
+                                </div>
+
+
+                                <div class="col-md-6 mb-6">
+                                    <div class="form-floating mb-3 mt-3">
+                                        <select class="form-select" id="terceiraSemana" name="terceiraSemana" required>
+                                            <option value="" disabled selected>Selecione a semana</option>
+                                            {% for i in range(1, 18) %}
+                                            <option value="{{ i }}">{{ i }}</option>
+                                            {% endfor %}
+                                        </select>
+                                        <label for="terceiraSemana" class="form-label">Semana da terceira aplicação:</label>
+                                        <div class="invalid-feedback">Selecione uma semana.</div>
+                                    </div>
+                                </div>
+
+
+                                <div class="col-md-12 mb-3 text-center">
+                                    <button type="submit" class="btn btn-primary w-100">Verificar</button>
+                                </div>
+
+                            </form>
+                            </div>
+                        </div>
+                </div>
+                <br>
+                <br>
+
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Menu Inicial - Aplicação de Fungicidas</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <style>
+        body {
+            background-image: url('{{ url_for("static", filename="imagens/soja2.jpg") }}');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            height: 100vh;
+        }
+
+        .menu-container {
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 0 10px #00000055;
+        }
+
+        h1 {
+            font-weight: bold;
+        }
+
+        .btn-menu {
+            font-size: 1.2rem;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container h-100 d-flex justify-content-center align-items-center">
+    <div class="menu-container text-center col-md-6">
+        <h1>Bem-vindo</h1>
+        <p class="mb-4">Qual aplicação você deseja calcular?</p>
+
+        <a href="/form1" class="btn btn-primary w-100 btn-menu">1ª Aplicação</a>
+        <a href="/form2" class="btn btn-success w-100 btn-menu">2ª Aplicação</a>
+        <a href="/form3" class="btn btn-warning w-100 btn-menu">3ª Aplicação</a>
+    </div>
+</div>
+
+</body>
+</html>

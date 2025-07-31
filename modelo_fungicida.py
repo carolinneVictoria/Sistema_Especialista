@@ -302,8 +302,8 @@ def executar_terceira_inferencia_fungicida(evidencias):
         PA2 = pm.Categorical("PA2", p=p_PA2)
 
         #SA2 e SA3 >= 16 : passou do R6
-        causa_sa2 = 1.0 if sa2 >= 16 else 0.0
-        causa_sa3 = 1.0 if sa3 >= 16 else 0.0
+        causa_sa2 = 1.0 if sa2 >= 15 else 0.0
+        causa_sa3 = 1.0 if sa3 >= 15 else 0.0
         leak = 0.3
 
         # Cálculo do noisy-MAX

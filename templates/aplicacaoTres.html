@@ -53,6 +53,13 @@
 
                                 <div class="col-md-6 mb-6">
                                     <div class="form-floating mb-3 mt-3">
+                                        <input type="date" class="form-control" name="dataPlantio" required>
+                                        <label for="dataPlantio" class="form-label">Data do Plantio</label>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 mb-6">
+                                    <div class="form-floating mb-3 mt-3">
                                         <select class="form-select" id="fungicidaUtilizado" name="fungicidaUtilizado" required>
                                             <option value="0">Nenhum</option>
                                             <option value="1">TriazolEstrub</option>
@@ -66,28 +73,16 @@
 
                                 <div class="col-md-6 mb-6">
                                     <div class="form-floating mb-3 mt-3">
-                                        <select class="form-select" id="segundaSemana" name="segundaSemana" required>
-                                            <option value="" disabled selected>Selecione a semana</option>
-                                            {% for i in range(1, 18) %}
-                                            <option value="{{ i }}">{{ i }}</option>
-                                            {% endfor %}
-                                        </select>
-                                        <label for="segundaSemana" class="form-label">Semana da segunda aplicação:</label>
-                                        <div class="invalid-feedback">Selecione uma semana.</div>
+                                        <input type="date" class="form-control" id="dataSegunda" name="dataSegunda" required>
+                                        <label for="dataSegunda" class="form-label">Data da segunda aplicação:</label>
                                     </div>
                                 </div>
 
 
                                 <div class="col-md-6 mb-6">
                                     <div class="form-floating mb-3 mt-3">
-                                        <select class="form-select" id="terceiraSemana" name="terceiraSemana" required>
-                                            <option value="" disabled selected>Selecione a semana</option>
-                                            {% for i in range(1, 18) %}
-                                            <option value="{{ i }}">{{ i }}</option>
-                                            {% endfor %}
-                                        </select>
-                                        <label for="terceiraSemana" class="form-label">Semana da terceira aplicação:</label>
-                                        <div class="invalid-feedback">Selecione uma semana.</div>
+                                        <input type="date" class="form-control" id="dataTerceira" name="dataTerceira" required>
+                                        <label for="dataTerceira" class="form-label">Data da terceira aplicação:</label>
                                     </div>
                                 </div>
 

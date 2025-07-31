@@ -104,17 +104,20 @@ def resultado():
 def segundaAplicacao():
     return render_template('aplicacaoDois.html')
 
-#Rota para processsar os dados do segundo formulário
 @app.route("/resultado2", methods=['POST'])
 def calcular_segunda_aplicacao():
     print("Função resultado2() chamada")
     if request.method == 'POST':
-        # Converte as datas recebidas em semanas do ano
-        data_primeira = datetime.strptime(request.form['dataPrimeira'], '%Y-%m-%d')
-        data_segunda = datetime.strptime(request.form['dataSegunda'], '%Y-%m-%d')
+        
+        data_plantio   = datetime.strptime(request.form['dataPlantio'], '%Y-%m-%d')
+        data_primeira  = datetime.strptime(request.form['dataPrimeira'], '%Y-%m-%d')
+        data_segunda   = datetime.strptime(request.form['dataSegunda'], '%Y-%m-%d')
 
-        semana_primeira = data_primeira.isocalendar()[1]
-        semana_segunda = data_segunda.isocalendar()[1]
+        dt_primeiro = (data_primeira - data_plantio).days
+        dt_segunda  = (data_segunda - data_plantio).days
+
+        semana_primeira = max(1, dt_primeiro // 7 + 1)
+        semana_segunda  = max(1, dt_segunda // 7 + 1)
 
         evidencias_numericas = {
             'TC' : int(request.form['toleranciaCultivar']),
@@ -128,16 +131,15 @@ def calcular_segunda_aplicacao():
         dados_para_exibir = {
             'Tolerância do Cultivar'                           : segundo_mapeamento_display['toleranciaCultivar'][evidencias_numericas['TC']],
             'Fungicida Utilizado'                              : segundo_mapeamento_display['fungicidaUtilizado'][evidencias_numericas['FA1']],
+            'Data do Plantio'                                  : data_plantio.strftime('%d/%m/%Y'),
             'Primeira aplicação (data)'                        : data_primeira.strftime('%d/%m/%Y') + f" (Semana {semana_primeira})",
             'Segunda aplicação (data)'                         : data_segunda.strftime('%d/%m/%Y') + f" (Semana {semana_segunda})",
             'Periodo Residual do Produto'                      : segundo_mapeamento_display['periodoAplicacao'][var_pa1],
             'Diferença entre a primeira e a segunda aplicação' : segundo_mapeamento_display['diferencaDias'][valorD12]
         }
 
-        # Formatação da probabilidade
         decisao_prob = f"{prob:.2%}"
 
-        # Recomendação textual com base na probabilidade
         if prob >= 0.8:
             recomendacao_texto = "Fortemente Recomendado"
         elif prob >= 0.5:
@@ -156,45 +158,74 @@ def calcular_segunda_aplicacao():
 
     return "Método não permitido", 405
 
+
 #rota para exibir o terceiro Formulario
 @app.route("/form3")
 def aplicacaoTres():
     return render_template('aplicacaoTres.html')
 
-#Rota para processar os dados do terceiro formulario
+from datetime import datetime
+from flask import request, render_template
+
 @app.route("/resultado3", methods=['POST'])
 def calcular_terceira_aplicacao():
     print("Função resultado3() chamada")
     if request.method == 'POST':
-        evidencias_numericas = {
-            'TC' :  int(request.form['toleranciaCultivar']),
-            'FA2' :  int(request.form['fungicidaUtilizado']),
-            'SA2':  int(request.form['segundaSemana']),
-            'SA3':  int(request.form['terceiraSemana'])
-        }
+        try:
+            # Captura e conversão das datas
+            data_plantio   = datetime.strptime(request.form['dataPlantio'], '%Y-%m-%d')
+            data_segunda   = datetime.strptime(request.form['dataSegunda'], '%Y-%m-%d')
+            data_terceira  = datetime.strptime(request.form['dataTerceira'], '%Y-%m-%d')
 
-        prob, var_em, var_pa2 = executar_terceira_inferencia_fungicida(evidencias_numericas)
+            # Cálculo das semanas relativas ao plantio
+            semana_segunda  = (data_segunda  - data_plantio).days // 7 + 1
+            semana_terceira = (data_terceira - data_plantio).days // 7 + 1
 
-        dados_para_exibir = {
-            'Tolerância do Cultivar'        : terceiro_mapeamento_display['toleranciaCultivar'][evidencias_numericas['TC']],
-            'Fungicida Utilizado'           : terceiro_mapeamento_display['fungicidaUtilizado'][evidencias_numericas['FA2']],
-            'Segunda semana de aplicação'   : f"Semana {evidencias_numericas['SA2']}",
-            'Terceira semana de aplicação'  : f"Semana {evidencias_numericas['SA3']}",
-            'Período Residual do produto'   : terceiro_mapeamento_display['periodoAplicacao'][var_pa2],
-            'Estádio de Maturação'          : terceiro_mapeamento_display['estadioMaturacao'][var_em]
-        }
-        # formatacao da probabilidade
-        decisao_prob = f"{prob:.2%}"
+            if semana_segunda <= 0 or semana_terceira <= 0:
+                return "Erro: datas de aplicação não podem ser anteriores ao plantio."
 
-        recomendacao_texto = "Provavelmente Recomendado" if prob >= 0.5 else "Provavelmente Não Recomendado"
-        if prob >= 0.8:
-            recomendacao_texto = "Fortemente Recomendado"
-        elif prob <= 0.2:
-            recomendacao_texto = "Fortemente Não Recomendado"
+            if semana_terceira < semana_segunda:
+                return "Erro: a terceira aplicação não pode ocorrer antes da segunda."
+            
+            evidencias_numericas = {
+                'TC' :  int(request.form['toleranciaCultivar']),
+                'FA2':  int(request.form['fungicidaUtilizado']),
+                'SA2':  semana_segunda,
+                'SA3':  semana_terceira
+            }
 
-        return render_template('resultado3.html', dados=dados_para_exibir, decisao_prob=decisao_prob, recomendacao_texto=recomendacao_texto)
+            prob, var_em, var_pa2 = executar_terceira_inferencia_fungicida(evidencias_numericas)
+
+            dados_para_exibir = {
+                'Tolerância do Cultivar'        : terceiro_mapeamento_display['toleranciaCultivar'][evidencias_numericas['TC']],
+                'Fungicida Utilizado'           : terceiro_mapeamento_display['fungicidaUtilizado'][evidencias_numericas['FA2']],
+                'Segunda semana de aplicação'   : data_segunda.strftime('%d/%m/%Y') + f" (Semana {semana_segunda})",
+                'Terceira semana de aplicação'  : data_terceira.strftime('%d/%m/%Y') + f" (Semana {semana_terceira})",
+                'Período Residual do produto'   : terceiro_mapeamento_display['periodoAplicacao'][var_pa2],
+                'Estádio de Maturação'          : terceiro_mapeamento_display['estadioMaturacao'][var_em]
+            }
+
+            decisao_prob = f"{prob:.2%}"
+
+            if prob >= 0.8:
+                recomendacao_texto = "Fortemente Recomendado"
+            elif prob >= 0.5:
+                recomendacao_texto = "Provavelmente Recomendado"
+            elif prob <= 0.2:
+                recomendacao_texto = "Fortemente Não Recomendado"
+            else:
+                recomendacao_texto = "Provavelmente Não Recomendado"
+
+            return render_template('resultado3.html',
+                dados=dados_para_exibir,
+                decisao_prob=decisao_prob,
+                recomendacao_texto=recomendacao_texto)
+
+        except Exception as e:
+            return f"Erro ao processar os dados: {e}"
 
     return "Método não permitido", 405
+
 
 if __name__ == '__main__':
     app.run(debug=True)

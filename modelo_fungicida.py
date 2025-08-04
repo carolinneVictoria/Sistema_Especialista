@@ -216,7 +216,7 @@ def executar_inferencia_fungicida(evidencias=None):
             )
         A1 = pm.Categorical("A1", p=p_A1)
         
-        trace_inf = pm.sample(draws=500, chains=1, tune=250, return_inferencedata=True)
+        trace_inf = pm.sample(draws=100, chains=1, tune=100, return_inferencedata=True)
 
     # Extrai as amostras e calcula a probabilidade de A1 ser 'sim' (1)
     a1_samples = trace_inf.posterior["A1"].values.flatten()
@@ -264,7 +264,7 @@ def executar_segunda_inferencia_fungicida(evidencias):
 
         A2 = pm.Categorical("A2", p=p_A2)
 
-        trace_inf = pm.sample(draws=500, chains=1, tune=250, return_inferencedata=True)
+        trace_inf = pm.sample(draws=100, chains=1, tune=100, return_inferencedata=True)
 
     a2_samples = trace_inf.posterior["A2"].values.flatten()
     pa1_samples = trace_inf.posterior["PA1"].values.flatten()
@@ -334,7 +334,7 @@ def executar_terceira_inferencia_fungicida(evidencias):
                 )
 
         A3 = pm.Categorical("A3", p=p_A3)
-        trace_inf = pm.sample(draws=500, chains=1, tune=250, return_inferencedata=True)
+        trace_inf = pm.sample(draws=100, chains=1, tune=100, return_inferencedata=True)
 
     a3_samples = trace_inf.posterior["A3"].values.flatten()
     em_samples = trace_inf.posterior["EM"].values.flatten()

@@ -259,13 +259,14 @@ def formulario_especialista():
         cenario_id = request.form["cenario_id"]
         decisao = request.form["decisao"]
         justificativa = request.form.get("justificativa", "")
+        nome = request.form["nome"]
 
         conn = sqlite3.connect(DB_PATH)
         cursor = conn.cursor()
         cursor.execute("""
-            INSERT INTO respostas_especialista (cenario_id, decisao, justificativa)
-            VALUES (?, ?, ?)
-        """, (cenario_id, decisao, justificativa))
+            INSERT INTO respostas_especialista (cenario_id, decisao, justificativa, nome)
+            VALUES (?, ?, ?, ?)
+        """, (cenario_id, decisao, justificativa, nome))
         conn.commit()
         conn.close()
 

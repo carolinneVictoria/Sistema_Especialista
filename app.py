@@ -1,6 +1,11 @@
 from flask import Flask, render_template, request
 from datetime import datetime
 from modelo_fungicida import executar_inferencia_fungicida, map_PT, map_EF, map_PA, map_C, map_ES, map_I, map_MV, map_OLV, map_ACE, map_VS, map_IP, map_IPV, map_OP, map_CA, map_SS, map_CI, map_G, executar_segunda_inferencia_fungicida, map_TC, map_A1, map_SA1, map_SA2, map_FA1, map_A2, map_D12, map_PA1, executar_terceira_inferencia_fungicida, map_A2, map_A3, map_D23, map_EM, map_FA2, map_PA2, map_SA2, map_SA3, map_TC
+import pandas as pd
+import os
+from flask import redirect, url_for
+import random
+import sqlite3
 
 app = Flask(__name__)
 
@@ -33,18 +38,43 @@ terceiro_mapeamento_display = {
     'periodoAplicacao'      : {v: k for k, v in map_PA2.items()},
     'estadioMaturacao'      : {v: k for k, v in map_EM.items()}
 }
+nomes_variaveis = {
+    "PT": "Previsão do Tempo",
+    "EF": "Estádio Fenológico",
+    "C" : "Chuva",
+    "PA" : "Perfil do Agricultor",
+    "OLV" : "Ocorrência em Lavouras Vizinhas",
+    "MV" : "Monitoramento Visual",
+    "ACE" : "Armadilha de Coleta de Esporos",
+    "ES" : "Epoca de Semeadura",
+    "VS" : "Vazio Sanitário",
+    "OP" : "Ocorrência no Paraguai",
+    "CA" : "Corrente Aerea do Oeste para o Leste",
+    "SS" : "Soja Safrinha",
+    "CI" : "Chuva de Inverno",
+    "G" : "Geada",
+    "TC" : "Tolerância do Cultivar",
+    "SA1" : "Primeira Semana de Aplicação",
+    "SA2" : "Segunda Semana de Aplicação",
+    "SA3" : "Terceira Semana de Aplicação"
+}
+
+CENARIOS_PATH = "cenarios.csv"
+RESPOSTAS_PATH = "respostas_especialista.csv"
+DB_PATH = "especialista.db"
+
+cenarios = pd.read_csv(CENARIOS_PATH)
+total_cenarios = len(cenarios)
 
 # Rota para exibir o primeiro formulário
 @app.route('/')
 def index():
     return render_template('index.html')
 
-# Rota para exibir o primeiro formulário
 @app.route('/form1')
 def aplicacaoUm():
     return render_template('aplicacaoUm.html')
 
-# Rota para processar os dados do formulário
 @app.route('/resultado', methods=['POST'])
 def resultado():
     print("Função resultado() chamada")
@@ -99,7 +129,6 @@ def resultado():
     
     return "Método não permitido", 405
 
-#rota para exibir o segundo Formulario
 @app.route("/form2")
 def segundaAplicacao():
     return render_template('aplicacaoDois.html')
@@ -158,8 +187,6 @@ def calcular_segunda_aplicacao():
 
     return "Método não permitido", 405
 
-
-#rota para exibir o terceiro Formulario
 @app.route("/form3")
 def aplicacaoTres():
     return render_template('aplicacaoTres.html')
@@ -226,6 +253,34 @@ def calcular_terceira_aplicacao():
 
     return "Método não permitido", 405
 
+@app.route("/especialista", methods=["GET", "POST"])
+def formulario_especialista():
+    if request.method == "POST":
+        cenario_id = request.form["cenario_id"]
+        decisao = request.form["decisao"]
+        justificativa = request.form.get("justificativa", "")
+
+        conn = sqlite3.connect(DB_PATH)
+        cursor = conn.cursor()
+        cursor.execute("""
+            INSERT INTO respostas_especialista (cenario_id, decisao, justificativa)
+            VALUES (?, ?, ?)
+        """, (cenario_id, decisao, justificativa))
+        conn.commit()
+        conn.close()
+
+        return redirect(url_for("index"))
+
+    cenario_id = random.randint(0, total_cenarios - 1)
+    cenario = cenarios.iloc[cenario_id].to_dict()
+
+    return render_template(
+        "formEspecialista.html",
+        cenario=cenario,
+        cenario_id=cenario_id,
+        nomes_variaveis=nomes_variaveis,
+        total=total_cenarios
+    )
 
 if __name__ == '__main__':
     from os import environ

@@ -256,21 +256,66 @@ def calcular_terceira_aplicacao():
 @app.route("/especialista", methods=["GET", "POST"])
 def formulario_especialista():
     if request.method == "POST":
-        cenario_id = request.form["cenario_id"]
-        decisao = request.form["decisao"]
+        cenario_id = int(request.form["cenario_id"])
+        decisao_especialista = request.form["decisao"]
         justificativa = request.form.get("justificativa", "")
         nome = request.form["nome"]
+        cenario = cenarios.iloc[cenario_id].to_dict()
+
+        mapeamento = {
+            'fav': 1,
+            'ausente': 0,
+            'desfav': 0,
+            'baixo': 0,
+            'medio': 1,
+            'alto': 2,
+            'sim': 1,
+            'nao': 0,
+            'presente': 1,
+            'pouca': 0,
+            'normal': 1,
+            'muito': 2
+        }
+
+        evidencias_numericas = {}
+        for chave, valor in cenario.items():
+            try:
+                evidencias_numericas[chave] = int(valor)
+            except ValueError:
+                valor_normalizado = str(valor).strip().lower()
+                evidencias_numericas[chave] = mapeamento.get(valor_normalizado, 0)
+
+        prob_aplicar = executar_inferencia_fungicida(evidencias_numericas)
+
+        decisao_modelo = "Aplicar" if prob_aplicar >= 0.5 else "Não aplicar"
+        prob_formatada = f"{prob_aplicar:.2%}"
 
         conn = sqlite3.connect(DB_PATH)
         cursor = conn.cursor()
         cursor.execute("""
-            INSERT INTO respostas_especialista (cenario_id, decisao, justificativa, nome)
-            VALUES (?, ?, ?, ?)
-        """, (cenario_id, decisao, justificativa, nome))
+            INSERT INTO respostas_especialista
+            (cenario_id, decisao, justificativa, nome, decisao_modelo, prob_modelo)
+            VALUES (?, ?, ?, ?, ?, ?)
+        """, (
+            cenario_id,
+            decisao_especialista,
+            justificativa,
+            nome,
+            decisao_modelo,
+            prob_formatada
+        ))
         conn.commit()
         conn.close()
 
-        return redirect(url_for("index"))
+        return render_template(
+            "resultado_modelo.html",
+            nome=nome,
+            decisao_especialista=decisao_especialista,
+            justificativa=justificativa,
+            decisao_modelo=decisao_modelo,
+            prob_modelo=prob_formatada,
+            cenario=cenario
+        )
 
     cenario_id = random.randint(0, total_cenarios - 1)
     cenario = cenarios.iloc[cenario_id].to_dict()
@@ -282,6 +327,26 @@ def formulario_especialista():
         nomes_variaveis=nomes_variaveis,
         total=total_cenarios
     )
+
+
+
+@app.route("/respostas")
+def visualizar_respostas():
+    conn = sqlite3.connect("especialista.db")
+    cursor = conn.cursor()
+
+    # Pega todas as respostas
+    cursor.execute("SELECT * FROM respostas_especialista")
+    dados = cursor.fetchall()
+
+    # Pega os nomes das colunas
+    colunas = [descricao[0] for descricao in cursor.description]
+
+    conn.close()
+
+    # Renderiza em um template HTML
+    return render_template("respostas.html", dados=dados, colunas=colunas)
+
 
 if __name__ == '__main__':
     from os import environ

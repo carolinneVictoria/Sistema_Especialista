@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resultado do Modelo</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background-image: url("{{ url_for('static', filename='imagens/soja2.jpg') }}");
+            background-size: cover;
+            background-position: center;
+            font-family: 'Segoe UI', sans-serif;
+        }
+        .card {
+            background-color: rgba(255, 255, 255, 0.93);
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.25);
+            padding: 25px;
+        }
+        h2 {
+            font-weight: 700;
+            color: #2e4a25;
+        }
+        .btn-primary {
+            background-color: #4b8b3b;
+            border: none;
+        }
+        .btn-primary:hover {
+            background-color: #3b6f2f;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card text-center">
+                <h2 class="mb-4">Resultado da Avaliação</h2>
+
+                <p><b>Especialista:</b> {{ nome }}</p>
+                <p><b>Decisão do Especialista:</b> {{ decisao_especialista }}</p>
+                <p><b>Justificativa:</b> {{ justificativa }}</p>
+
+                <hr>
+
+                <h4 class="text-success mt-3">Decisão do Modelo</h4>
+                <p><b>Resultado:</b> {{ decisao_modelo }}</p>
+                <p><b>Probabilidade de Aplicação:</b> {{ prob_modelo }}</p>
+
+                <hr>
+
+                <a href="{{ url_for('index') }}" class="btn btn-primary mt-3 px-5">Voltar ao Início</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
